@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Business Spreadsheets - Expense Tracker. Track every expense, stay in control, grow your business. Luxury gold executive dashboard.">
+  <meta name="keywords" content="Expense Tracker, Business Spreadsheets, Excel Solutions, Gold Dashboard, Finance Management">
+  <meta name="author" content="Business Spreadsheets">
+  <title>EXPENSE TRACKER | BUSINESS SPREADSHEETS</title>
+
+  <!-- Google Fonts: Luxury Serif 'Cinzel' & 'Playfair Display' + Clean 'Plus Jakarta Sans' & 'JetBrains Mono' -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- FontAwesome Icons 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Chart.js for Business Analytics -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <!-- Custom Stylesheet matching exact luxury reference UI -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ====================================================================
+       STICKY EXECUTIVE TOP NAVBAR WITH COMPONENT TABS
+       ==================================================================== -->
+  <nav class="executive-sticky-navbar" id="executive-navbar">
+    <div class="navbar-inner">
+      <div class="navbar-brand" id="nav-brand-logo" title="Back to Dashboard">
+        <div class="nav-monogram">BS</div>
+        <div class="nav-brand-text">
+          <span class="nav-title">BUSINESS SPREADSHEETS</span>
+          <span class="nav-subtitle">EXECUTIVE EXPENSE SUITE</span>
+        </div>
+      </div>
+
+      <!-- Component Navigation Tabs -->
+      <div class="nav-tabs-wrapper" role="tablist">
+        <button class="nav-tab-btn active" data-target="dashboard" role="tab" aria-selected="true">
+          <i class="fa-solid fa-gauge-high"></i> <span>Dashboard</span>
+        </button>
+        <button class="nav-tab-btn" data-target="ledger" role="tab" aria-selected="false">
+          <i class="fa-solid fa-table-list"></i> <span>Expense Ledger</span>
+        </button>
+        <button class="nav-tab-btn" data-target="analytics" role="tab" aria-selected="false">
+          <i class="fa-solid fa-chart-pie"></i> <span>Spending Analytics</span>
+        </button>
+        <button class="nav-tab-btn" data-target="budgets" role="tab" aria-selected="false">
+          <i class="fa-solid fa-wallet"></i> <span>Budget & Goals</span>
+        </button>
+        <button class="nav-tab-btn" data-target="insights" role="tab" aria-selected="false">
+          <i class="fa-solid fa-lightbulb"></i> <span>Smart Insights</span>
+        </button>
+        <button class="nav-tab-btn" data-target="all" role="tab" aria-selected="false">
+          <i class="fa-solid fa-border-all"></i> <span>View All</span>
+        </button>
+      </div>
+
+      <div class="navbar-actions">
+        <button class="btn-gold-nav" id="btn-quick-add" title="Shortcut: Press 'N'">
+          <i class="fa-solid fa-plus"></i> <span>Add Expense</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Full Luxury Page Container -->
+  <div class="luxury-portal-container">
+
+    <!-- ==================================================================
+         1. TOP EXECUTIVE HEADER (BS Monogram + Brand + Main Title)
+         ================================================================== -->
+    <header class="top-luxury-header">
+      
+      <!-- Brand Script Monogram: BS -->
+      <div class="brand-monogram-block">
+        <div class="monogram-emblem">BS</div>
+        <div class="brand-text-lines">
+          <span class="brand-line-1">BUSINESS SPREADSHEETS</span>
+          <span class="brand-line-2">EXCEL SOLUTIONS</span>
+        </div>
+      </div>
+
+      <!-- Main Luxury Serif Title: EXPENSE TRACKER -->
+      <div class="main-title-wrap">
+        <h1 class="hero-gold-title">EXPENSE</h1>
+        <div class="title-sub-row">
+          <span class="title-decor-line"></span>
+          <span class="hero-gold-subtitle">TRACKER</span>
+          <span class="title-decor-line"></span>
+        </div>
+      </div>
+
+      <!-- Ribbon Subtitle Tagline -->
+      <div class="gold-ribbon-tag">
+        <span>TRACK EVERY EXPENSE. STAY IN CONTROL. GROW YOUR BUSINESS.</span>
+      </div>
+
+    </header>
+
+    <!-- ==================================================================
+         2. TOP 4 FEATURE PILLARS ROW (Interactive Component Triggers)
+         ================================================================== -->
+    <section class="top-pillars-grid" aria-label="Feature Highlights">
+      
+      <button type="button" class="pillar-circle-card" id="pillar-track-expenses" title="Navigate to Expense Ledger">
+        <div class="pillar-circle-icon"><i class="fa-solid fa-receipt"></i></div>
+        <h3 class="pillar-heading">TRACK EXPENSES</h3>
+        <p class="pillar-subtext">Log every business expense with ease.</p>
+        <span class="pillar-action-tag"><i class="fa-solid fa-table-list"></i> Open Ledger</span>
+      </button>
+
+      <button type="button" class="pillar-circle-card" id="pillar-visualize-spending" title="Navigate to Spending Analytics">
+        <div class="pillar-circle-icon"><i class="fa-solid fa-chart-pie"></i></div>
+        <h3 class="pillar-heading">VISUALIZE SPENDING</h3>
+        <p class="pillar-subtext">Gain insights with powerful dashboards.</p>
+        <span class="pillar-action-tag"><i class="fa-solid fa-chart-simple"></i> View Charts</span>
+      </button>
+
+      <button type="button" class="pillar-circle-card" id="pillar-manage-budgets" title="Navigate to Budget Planner">
+        <div class="pillar-circle-icon"><i class="fa-solid fa-wallet"></i></div>
+        <h3 class="pillar-heading">MANAGE BUDGETS</h3>
+        <p class="pillar-subtext">Stay within budget and reduce waste.</p>
+        <span class="pillar-action-tag"><i class="fa-solid fa-sliders"></i> Plan Budget</span>
+      </button>
+
+      <button type="button" class="pillar-circle-card" id="pillar-smart-decisions" title="Navigate to Financial Insights">
+        <div class="pillar-circle-icon"><i class="fa-solid fa-chart-line"></i></div>
+        <h3 class="pillar-heading">MAKE SMART DECISIONS</h3>
+        <p class="pillar-subtext">Data-driven choices for better results.</p>
+        <span class="pillar-action-tag"><i class="fa-solid fa-lightbulb"></i> View Insights</span>
+      </button>
+
+    </section>
+
+    <!-- ==================================================================
+         3. MAIN EXECUTIVE DASHBOARD (Screen Surface with Component Views)
+         ================================================================== -->
+    <main class="dashboard-laptop-screen" id="dashboard-laptop-screen">
+
+      <!-- ================================================================
+           VIEW 1: DASHBOARD OVERVIEW (Key Metrics + Quick Summaries)
+           ================================================================ -->
+      <div class="component-view active" id="view-dashboard">
+        
+        <!-- Screen Top Bar: Title + Top 5 Metric Cards + Actions -->
+        <div class="screen-top-bar">
+          <div class="dashboard-screen-title">
+            <span class="screen-title-sub">EXECUTIVE</span>
+            <span class="screen-title-main">OVERVIEW</span>
+          </div>
+
+          <!-- 5 Key Figures Row -->
+          <div class="metric-ribbon-row">
+            
+            <div class="metric-pill-box">
+              <span class="metric-pill-label">TOTAL EXPENSES</span>
+              <span class="metric-pill-val" id="metric-total-expenses">₹24,850.00</span>
+            </div>
+
+            <div class="metric-pill-box">
+              <span class="metric-pill-label">THIS MONTH</span>
+              <span class="metric-pill-val" id="metric-this-month">₹4,250.00</span>
+            </div>
+
+            <div class="metric-pill-box">
+              <span class="metric-pill-label">LAST MONTH</span>
+              <span class="metric-pill-val" id="metric-last-month">₹3,890.00</span>
+            </div>
+
+            <div class="metric-pill-box">
+              <span class="metric-pill-label">MONTH OVER MONTH</span>
+              <span class="metric-pill-val text-gold-trend" id="metric-mom-pct">+ 9.26% ↗</span>
+            </div>
+
+            <div class="metric-pill-box">
+              <span class="metric-pill-label">TOTAL CATEGORIES</span>
+              <span class="metric-pill-val" id="metric-total-categories">9</span>
+            </div>
+
+          </div>
+
+          <!-- Quick Actions -->
+          <div class="screen-actions-bar">
+            <button class="btn-gold-action" id="btn-add-record" title="Shortcut: Press 'N'">
+              <i class="fa-solid fa-plus"></i> Add Expense
+            </button>
+            <button class="btn-outline-action" id="btn-export-csv" title="Export to CSV">
+              <i class="fa-solid fa-file-csv"></i> CSV
+            </button>
+            <button class="btn-outline-action" id="btn-reset-demo" title="Reset sample records">
+              <i class="fa-solid fa-rotate-left"></i> Reset
+            </button>
+            <button class="btn-outline-action text-danger" id="btn-clear-all" title="Clear all expenses">
+              <i class="fa-regular fa-trash-can"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Dashboard 3-Card Executive Quick Summary Grid -->
+        <div class="dashboard-overview-cards-grid">
+          
+          <!-- Card A: Quick Budget Meter -->
+          <div class="dark-panel-box overview-summary-box">
+            <div class="panel-header-line">
+              <h3 class="panel-header-title"><i class="fa-solid fa-wallet" style="color: var(--gold-primary); margin-right: 6px;"></i> MONTHLY BUDGET STATUS</h3>
+              <button type="button" class="btn-panel-link" data-jump-view="budgets">Manage →</button>
+            </div>
+            <div class="overview-budget-content">
+              <div class="overview-stat-row">
+                <span class="overview-stat-label">Spent This Month</span>
+                <span class="overview-stat-val" id="dash-spent-val">₹ 24,850.00</span>
+              </div>
+              <div class="budget-bar-track" style="margin: 10px 0;">
+                <div class="budget-bar-fill" id="dash-budget-bar" style="width: 50%;"></div>
+              </div>
+              <div class="overview-stat-row sub-row">
+                <span id="dash-budget-pct-text" style="color: var(--text-dim); font-size: 11px;">50% of monthly budget</span>
+                <span id="dash-budget-remain-text" style="color: var(--gold-light); font-weight: 700; font-size: 11px;">Remaining: ₹ 25,150.00</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card B: Spending Highlight Preview -->
+          <div class="dark-panel-box overview-summary-box">
+            <div class="panel-header-line">
+              <h3 class="panel-header-title"><i class="fa-solid fa-chart-pie" style="color: var(--gold-primary); margin-right: 6px;"></i> SPEND DISTRIBUTION</h3>
+              <button type="button" class="btn-panel-link" data-jump-view="analytics">All Charts →</button>
+            </div>
+            <div class="overview-highlight-content">
+              <div class="quick-cat-stat-list">
+                <div class="quick-cat-stat-item">
+                  <span class="q-dot" style="background: #c59b27;"></span>
+                  <span class="q-name">Marketing</span>
+                  <span class="q-val">₹ 6,450 (26%)</span>
+                </div>
+                <div class="quick-cat-stat-item">
+                  <span class="q-dot" style="background: #e5c058;"></span>
+                  <span class="q-name">Office Supplies</span>
+                  <span class="q-val">₹ 4,320 (17%)</span>
+                </div>
+                <div class="quick-cat-stat-item">
+                  <span class="q-dot" style="background: #b8933b;"></span>
+                  <span class="q-name">Utilities</span>
+                  <span class="q-val">₹ 3,540 (14%)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card C: Recent Ledger Activity -->
+          <div class="dark-panel-box overview-summary-box">
+            <div class="panel-header-line">
+              <h3 class="panel-header-title"><i class="fa-solid fa-receipt" style="color: var(--gold-primary); margin-right: 6px;"></i> RECENT ACTIVITY</h3>
+              <button type="button" class="btn-panel-link" data-jump-view="ledger">Full Ledger →</button>
+            </div>
+            <div class="overview-recent-list" id="overview-recent-list">
+              <!-- Dynamically populated recent items -->
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- ================================================================
+           VIEW 2: EXPENSE LEDGER (Dedicated Full-Width Table)
+           ================================================================ -->
+      <div class="component-view" id="view-ledger">
+        <div class="dark-panel-box panel-table full-ledger-panel">
+          <div class="panel-header-line">
+            <div class="panel-title-with-counter">
+              <h3 class="panel-header-title"><i class="fa-solid fa-table-list" style="color: var(--gold-primary); margin-right: 8px;"></i> EXPENSE LEDGER</h3>
+              <span class="record-counter-pill" id="record-counter-pill">8 records</span>
+            </div>
+            <div class="ledger-actions-group">
+              <div class="table-search-wrap">
+                <i class="fa-solid fa-magnifying-glass table-search-icon"></i>
+                <input type="text" id="table-search-input" class="table-search-box" placeholder="Quick search description, category...">
+                <button class="search-clear-btn" id="btn-clear-search" style="display: none;" title="Clear search">
+                  <i class="fa-solid fa-xmark"></i>
+                </button>
+              </div>
+              <button class="btn-gold-action" id="btn-add-record-ledger">
+                <i class="fa-solid fa-plus"></i> Add Expense
+              </button>
+            </div>
+          </div>
+
+          <!-- User-Friendly Category Filter Pills Bar -->
+          <div class="table-filter-pills-bar" id="category-filter-pills">
+            <button class="cat-pill active" data-cat="all">All</button>
+            <button class="cat-pill" data-cat="Office Supplies">Office</button>
+            <button class="cat-pill" data-cat="Marketing">Marketing</button>
+            <button class="cat-pill" data-cat="Utilities">Utilities</button>
+            <button class="cat-pill" data-cat="Travel">Travel</button>
+            <button class="cat-pill" data-cat="Subscriptions">Subscriptions</button>
+            <button class="cat-pill" data-cat="Software">Software</button>
+            <button class="cat-pill" data-cat="Meals & Entertainment">Meals</button>
+          </div>
+
+          <div class="table-scroll-wrap">
+            <table class="luxury-table" id="expense-table">
+              <thead>
+                <tr>
+                  <th class="th-sortable" data-sort="date">DATE <i class="fa-solid fa-sort sort-icon"></i></th>
+                  <th class="th-sortable" data-sort="desc">DESCRIPTION <i class="fa-solid fa-sort sort-icon"></i></th>
+                  <th class="th-sortable" data-sort="category">CATEGORY <i class="fa-solid fa-sort sort-icon"></i></th>
+                  <th>PAYMENT METHOD</th>
+                  <th class="th-sortable" data-sort="amount" style="text-align: right;">AMOUNT <i class="fa-solid fa-sort sort-icon"></i></th>
+                  <th style="text-align: right;">TAX</th>
+                  <th class="th-sortable" data-sort="total" style="text-align: right;">TOTAL <i class="fa-solid fa-sort sort-icon"></i></th>
+                  <th>NOTES</th>
+                  <th style="text-align: center;">ACTION</th>
+                </tr>
+              </thead>
+              <tbody id="expense-tbody">
+                <!-- Dynamically populated rows -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================================================================
+           VIEW 3: SPENDING ANALYTICS (Spacious 2x2 Analytics Dashboards)
+           ================================================================ -->
+      <div class="component-view" id="view-analytics">
+        
+        <div class="section-component-title">
+          <h2 class="comp-title-gold"><i class="fa-solid fa-chart-pie"></i> Visual Spending Analytics</h2>
+          <p class="comp-title-sub">Comprehensive visual distribution across categories, timeline trends, payment outlays, and top expense ranking.</p>
+        </div>
+
+        <div class="analytics-2x2-grid">
+          
+          <!-- Card 1: EXPENSES BY CATEGORY -->
+          <div class="dark-panel-box panel-category">
+            <div class="panel-header-line">
+              <h3 class="panel-header-title">EXPENSES BY CATEGORY</h3>
+            </div>
+            <div class="category-panel-content">
+              <div class="donut-chart-wrap">
+                <canvas id="categoryDonutChart" width="130" height="130"></canvas>
+              </div>
+              <div class="category-legend-list" id="category-legend-list">
+                <!-- Dynamically populated categories -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 2: EXPENSES OVER TIME (Line Chart Jan - Dec) -->
+          <div class="dark-panel-box panel-over-time">
+            <div class="panel-header-line">
+              <h3 class="panel-header-title">EXPENSES OVER TIME</h3>
+            </div>
+            <div class="time-chart-wrap">
+              <canvas id="expensesOverTimeChart" height="150"></canvas>
+            </div>
+          </div>
+
+          <!-- Card 3: EXPENSES BY PAYMENT METHOD -->
+          <div class="dark-panel-box panel-payment">
+            <div class="panel-header-line">
+              <h3 class="panel-header-title">EXPENSES BY PAYMENT METHOD</h3>
+            </div>
+            <div class="payment-panel-content">
+              <div class="donut-chart-wrap payment-donut-wrap">
+                <canvas id="paymentDonutChart" width="130" height="130"></canvas>
+              </div>
+              <div class="payment-legend-list" id="payment-legend-list">
+                <!-- Dynamically populated payment methods -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 4: TOP EXPENSES RANKED BARS -->
+          <div class="dark-panel-box panel-top-expenses">
+            <div class="panel-header-line">
+              <h3 class="panel-header-title">TOP EXPENSES</h3>
+            </div>
+            <div class="top-expenses-list" id="top-expenses-list">
+              <!-- Dynamically populated ranked bars -->
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- ================================================================
+           VIEW 4: BUDGET & GOALS (Dedicated In-Page Budget Planner)
+           ================================================================ -->
+      <div class="component-view" id="view-budgets">
+        
+        <div class="section-component-title">
+          <h2 class="comp-title-gold"><i class="fa-solid fa-wallet"></i> Budget & Financial Targets</h2>
+          <p class="comp-title-sub">Set monthly thresholds, monitor utilization pace, and avoid cost overruns.</p>
+        </div>
+
+        <div class="dark-panel-box budget-dedicated-panel">
+          <div class="budget-panel-grid">
+            
+            <div class="budget-config-col">
+              <h3 class="budget-panel-heading">Configure Monthly Cap</h3>
+              <p style="color: var(--text-muted); font-size: 11.5px; margin-bottom: 12px;">Define your maximum permissible operating expenditures for the current billing cycle.</p>
+              
+              <div class="form-field" style="margin-bottom: 12px;">
+                <label for="input-inpage-budget">Monthly Target (₹)</label>
+                <input type="number" id="input-inpage-budget" class="gold-input" step="1000" min="1000" value="50000">
+              </div>
+
+              <div class="budget-chips-presets">
+                <span style="font-size: 10.5px; color: var(--gold-dim);">Quick Presets:</span>
+                <button type="button" class="budget-preset-btn" data-val="25000">₹25K</button>
+                <button type="button" class="budget-preset-btn" data-val="50000">₹50K</button>
+                <button type="button" class="budget-preset-btn" data-val="75000">₹75K</button>
+                <button type="button" class="budget-preset-btn" data-val="100000">₹100K</button>
+              </div>
+
+              <button type="button" class="btn-gold-save" id="btn-save-inpage-budget" style="margin-top: 14px; width: 100%;">
+                <i class="fa-solid fa-floppy-disk"></i> Update Budget Target
+              </button>
+            </div>
+
+            <div class="budget-meter-col">
+              <h3 class="budget-panel-heading">Live Expenditure Gauge</h3>
+              <div class="budget-stats-duo">
+                <div class="b-stat-card">
+                  <span class="b-stat-title">CURRENT SPENT</span>
+                  <span class="b-stat-number" id="inpage-spent-disp">₹ 24,850.00</span>
+                </div>
+                <div class="b-stat-card">
+                  <span class="b-stat-title">TARGET CAP</span>
+                  <span class="b-stat-number" id="inpage-target-disp">₹ 50,000.00</span>
+                </div>
+                <div class="b-stat-card">
+                  <span class="b-stat-title">REMAINING POOL</span>
+                  <span class="b-stat-number" id="inpage-remain-disp" style="color: var(--green-gain);">₹ 25,150.00</span>
+                </div>
+              </div>
+
+              <div class="budget-gauge-box">
+                <div class="budget-gauge-labels">
+                  <span style="font-size: 11px; color: var(--text-light); font-weight: 600;">Monthly Utilization</span>
+                  <span id="inpage-pct-disp" style="font-size: 11px; font-weight: 800; color: var(--gold-light);">50% used</span>
+                </div>
+                <div class="budget-bar-track" style="height: 12px; margin-top: 6px;">
+                  <div class="budget-bar-fill" id="inpage-budget-bar" style="width: 50%;"></div>
+                </div>
+              </div>
+
+              <div class="budget-status-notice" id="budget-status-notice">
+                <i class="fa-solid fa-circle-check" style="color: var(--green-gain);"></i>
+                <span>Spending is within safe operating thresholds. Projected end-of-month buffer: 48%.</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ================================================================
+           VIEW 5: SMART INSIGHTS (Dedicated Executive Decisions)
+           ================================================================ -->
+      <div class="component-view" id="view-insights">
+        
+        <div class="section-component-title">
+          <h2 class="comp-title-gold"><i class="fa-solid fa-lightbulb"></i> Executive Decisions & Smart Insights</h2>
+          <p class="comp-title-sub">Automated financial intelligence, cost drivers analysis, and margin optimization recommendations.</p>
+        </div>
+
+        <div class="insights-dashboard-grid">
+          
+          <div class="dark-panel-box insight-highlight-box">
+            <div class="panel-header-line">
+              <h3 class="panel-header-title"><i class="fa-solid fa-trophy" style="color: var(--gold-primary);"></i> PRIMARY SPEND DRIVER</h3>
+            </div>
+            <div class="insight-box-body">
+              <h4 style="font-size: 16px; color: #ffffff; margin-bottom: 6px;">Marketing & Client Acquisition</h4>
+              <p style="color: var(--text-muted); font-size: 12px; line-height: 1.5; margin-bottom: 12px;">
+                Marketing represents <strong style="color: var(--gold-light);">26% (₹ 6,450.00)</strong> of your total expenditures. To sustain healthy operating margins, verify that your customer acquisition blended ROAS exceeds 3.5x.
+              </p>
+              <div class="insight-badge-tag"><i class="fa-solid fa-arrow-trend-up"></i> High Impact Area</div>
+            </div>
+          </div>
+
+          <div class="dark-panel-box insight-highlight-box">
+            <div class="panel-header-line">
+              <h3 class="panel-header-title"><i class="fa-solid fa-shield-halved" style="color: var(--green-gain);"></i> SMART SAVINGS OPPORTUNITY</h3>
+            </div>
+            <div class="insight-box-body">
+              <h4 style="font-size: 16px; color: #ffffff; margin-bottom: 6px;">Consolidate SaaS & Recurring Utilities</h4>
+              <p style="color: var(--text-muted); font-size: 12px; line-height: 1.5; margin-bottom: 12px;">
+                Subscriptions & software outlays total <strong style="color: var(--gold-light);">₹ 3,200.00</strong> across multiple tools. Migrating monthly licenses to annual commitments unlocks up to <strong>15% annual savings</strong>.
+              </p>
+              <div class="insight-badge-tag green"><i class="fa-solid fa-piggy-bank"></i> Est. Savings: ₹ 480/mo</div>
+            </div>
+          </div>
+
+          <div class="dark-panel-box insight-highlight-box">
+            <div class="panel-header-line">
+              <h3 class="panel-header-title"><i class="fa-solid fa-calculator" style="color: var(--gold-primary);"></i> TAX & FISCAL AUDIT</h3>
+            </div>
+            <div class="insight-box-body">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <span style="font-size: 12px; color: var(--text-muted);">Recorded Input Tax</span>
+                <span style="font-family: var(--font-mono); font-size: 15px; font-weight: 700; color: var(--gold-light);" id="insights-total-tax">₹ 18.50</span>
+              </div>
+              <p style="color: var(--text-dim); font-size: 11px; line-height: 1.4;">
+                All tax outlays are categorized for immediate GST/VAT reconciliation and quarterly tax deduction filings.
+              </p>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </main>
+
+
+    <!-- ==================================================================
+         6. BOTTOM 4 TRUST BADGES (Interactive Actions)
+         ================================================================== -->
+    <section class="bottom-trust-grid" aria-label="Product Guarantees">
+      
+      <button type="button" class="trust-badge-card" id="badge-easy-use" title="Click for quick start guide">
+        <div class="trust-icon-box"><i class="fa-solid fa-circle-check"></i></div>
+        <div class="trust-info">
+          <h4 class="trust-title">EASY TO USE</h4>
+          <p class="trust-desc">Click for beginner quick-start guide</p>
+        </div>
+      </button>
+
+      <button type="button" class="trust-badge-card" id="badge-instant-download" title="Click to download CSV report">
+        <div class="trust-icon-box"><i class="fa-solid fa-cloud-arrow-down"></i></div>
+        <div class="trust-info">
+          <h4 class="trust-title">INSTANT DOWNLOAD</h4>
+          <p class="trust-desc">Export your portfolio to CSV instantly</p>
+        </div>
+      </button>
+
+      <button type="button" class="trust-badge-card" id="badge-accurate-reliable" title="Click to verify calculations">
+        <div class="trust-icon-box"><i class="fa-solid fa-shield-halved"></i></div>
+        <div class="trust-info">
+          <h4 class="trust-title">ACCURATE & RELIABLE</h4>
+          <p class="trust-desc">100% private, verified in-browser math</p>
+        </div>
+      </button>
+
+      <button type="button" class="trust-badge-card" id="badge-dedicated-support" title="Click for help and support">
+        <div class="trust-icon-box"><i class="fa-solid fa-headset"></i></div>
+        <div class="trust-info">
+          <h4 class="trust-title">DEDICATED SUPPORT</h4>
+          <p class="trust-desc">Tips, shortcuts and support details</p>
+        </div>
+      </button>
+
+    </section>
+
+    <!-- ==================================================================
+         7. LUXURY GOLD FOOTER BANNER
+         ================================================================== -->
+    <footer class="luxury-gold-banner">
+      <div class="banner-left-script">Simplify Today.</div>
+      <div class="banner-center-caps">SUCCEED TOMORROW.</div>
+      <div class="banner-divider-line"></div>
+      <div class="banner-right-info">
+        <span>Built for business.</span>
+        <span>Designed for you.</span>
+      </div>
+      <div class="banner-monogram-circle">BS</div>
+    </footer>
+
+  </div>
+
+  <!-- ====================================================================
+       ADD EXPENSE RECORD MODAL
+       ==================================================================== -->
+  <div class="modal-backdrop" id="add-expense-modal" style="display: none;">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-gold-title" id="modal-gold-title">Add Business Expense</h3>
+        <button class="modal-close-btn" id="btn-close-modal" aria-label="Close modal">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <form id="expense-form" class="modal-form" novalidate>
+        <div class="form-row-2">
+          <div class="form-field">
+            <label for="input-date">Date</label>
+            <input type="date" id="input-date" class="gold-input" required>
+            <small class="field-err" id="err-date">Enter date</small>
+          </div>
+          <div class="form-field">
+            <label for="input-category">Category</label>
+            <select id="input-category" class="gold-input" required>
+              <option value="Marketing">Marketing</option>
+              <option value="Office Supplies" selected>Office Supplies</option>
+              <option value="Utilities">Utilities</option>
+              <option value="Travel">Travel</option>
+              <option value="Subscriptions">Subscriptions</option>
+              <option value="Software">Software</option>
+              <option value="Meals & Entertainment">Meals & Entertainment</option>
+              <option value="Insurance">Insurance</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label for="input-desc">Description</label>
+          <input type="text" id="input-desc" class="gold-input" placeholder="e.g. Office Supplies, Facebook Ads" required>
+          <small class="field-err" id="err-desc">Enter description</small>
+        </div>
+
+        <div class="form-row-2">
+          <div class="form-field">
+            <label for="input-payment">Payment Method</label>
+            <select id="input-payment" class="gold-input" required>
+              <option value="Credit Card" selected>Credit Card</option>
+              <option value="Bank Transfer">Bank Transfer</option>
+              <option value="Cash">Cash</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label for="input-amount">Amount (₹)</label>
+            <input type="number" id="input-amount" class="gold-input" step="0.01" min="1" placeholder="120.00" required>
+            <small class="field-err" id="err-amount">Enter amount</small>
+          </div>
+        </div>
+
+        <!-- Quick Amount Presets -->
+        <div class="modal-quick-amounts">
+          <span class="quick-amt-label">Quick Add:</span>
+          <button type="button" class="quick-amt-chip" data-amt="100">+₹100</button>
+          <button type="button" class="quick-amt-chip" data-amt="500">+₹500</button>
+          <button type="button" class="quick-amt-chip" data-amt="1000">+₹1,000</button>
+          <button type="button" class="quick-amt-chip" data-amt="5000">+₹5,000</button>
+        </div>
+
+        <div class="form-row-2">
+          <div class="form-field">
+            <label for="input-tax">Tax (₹)</label>
+            <input type="number" id="input-tax" class="gold-input" step="0.01" min="0" placeholder="0.00" value="0.00">
+          </div>
+          <div class="form-field">
+            <label for="input-notes">Notes / Purpose</label>
+            <input type="text" id="input-notes" class="gold-input" placeholder="e.g. Printer paper & ink, Monthly ad">
+          </div>
+        </div>
+
+        <!-- Live Total Preview Box -->
+        <div class="modal-live-total-box">
+          <span class="live-total-label">Total Expense:</span>
+          <span class="live-total-calc" id="modal-live-total">₹ 0.00</span>
+        </div>
+
+        <div class="modal-buttons-row">
+          <button type="button" class="btn-cancel" id="btn-cancel-modal">Cancel</button>
+          <button type="submit" class="btn-gold-save" id="btn-save-record">Save Expense</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       MANAGE BUDGETS MODAL (Pillar 3)
+       ==================================================================== -->
+  <div class="modal-backdrop" id="budget-modal" style="display: none;">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-gold-title"><i class="fa-solid fa-wallet"></i> Manage Monthly Budget</h3>
+        <button class="modal-close-btn" id="btn-close-budget-modal" aria-label="Close dialog">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="modal-body-content">
+        <p style="color: var(--text-muted); font-size: 11.5px; margin-bottom: 14px;">
+          Set your business monthly expenditure ceiling to keep your burn rate under control.
+        </p>
+
+        <div class="form-field" style="margin-bottom: 14px;">
+          <label for="input-monthly-budget">Monthly Budget Target (₹)</label>
+          <input type="number" id="input-monthly-budget" class="gold-input" step="1000" min="1000" value="50000">
+        </div>
+
+        <!-- Budget Gauge -->
+        <div class="budget-progress-container" style="background: var(--bg-input); padding: 12px; border-radius: var(--radius-xs); border: 1px solid var(--gold-border-faint); margin-bottom: 16px;">
+          <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 6px;">
+            <span style="color: var(--text-muted);">Current Spend: <strong id="budget-spent-amount" style="color: #fff;">₹24,850.00</strong></span>
+            <span style="color: var(--gold-light);" id="budget-spent-pct">49.7% used</span>
+          </div>
+          <div class="top-exp-bar-track" style="height: 10px;">
+            <div class="top-exp-bar-fill" id="budget-progress-bar" style="width: 49.7%; transition: width 0.3s ease;"></div>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 10.5px; margin-top: 6px; color: var(--gold-dim);">
+            <span>Allowance Left: <strong id="budget-remaining-amount" style="color: var(--green-gain);">₹25,150.00</strong></span>
+            <span>Target: <strong id="budget-target-display">₹50,000.00</strong></span>
+          </div>
+        </div>
+
+        <div class="modal-buttons-row">
+          <button type="button" class="btn-cancel" id="btn-cancel-budget">Close</button>
+          <button type="button" class="btn-gold-save" id="btn-save-budget">Update Budget</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       SMART DECISIONS & INSIGHTS MODAL (Pillar 4)
+       ==================================================================== -->
+  <div class="modal-backdrop" id="insights-modal" style="display: none;">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-gold-title"><i class="fa-solid fa-lightbulb"></i> Smart Financial Decisions</h3>
+        <button class="modal-close-btn" id="btn-close-insights-modal" aria-label="Close dialog">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="modal-body-content" id="insights-content-body">
+        <!-- Dynamically generated intelligence insights -->
+      </div>
+
+      <div class="modal-buttons-row" style="margin-top: 16px;">
+        <button type="button" class="btn-gold-save" id="btn-close-insights">Understood</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       QUICK USER GUIDE & SUPPORT MODAL (Bottom Badges)
+       ==================================================================== -->
+  <div class="modal-backdrop" id="guide-modal" style="display: none;">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-gold-title" id="guide-modal-title"><i class="fa-solid fa-circle-question"></i> Expense Tracker Guide</h3>
+        <button class="modal-close-btn" id="btn-close-guide-modal" aria-label="Close dialog">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="modal-body-content" id="guide-content-body" style="font-size: 12px; color: var(--text-light); line-height: 1.6;">
+        <!-- Injected by script -->
+      </div>
+
+      <div class="modal-buttons-row" style="margin-top: 16px;">
+        <button type="button" class="btn-gold-save" id="btn-close-guide">Close Guide</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating Action Button (FAB) for Instant Access -->
+  <button class="floating-add-fab" id="fab-add-expense" title="Add New Expense (Shortcut: 'N')">
+    <i class="fa-solid fa-plus"></i>
+    <span class="fab-label">Add Expense</span>
+  </button>
+
+  <!-- Toast Notification Container with Undo Support -->
+  <div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+  <!-- Main JavaScript File -->
+  <script src="script.js"></script>
+</body>
+</html>
