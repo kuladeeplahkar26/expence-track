@@ -18,23 +18,8 @@
 const CURRENCY = '₹';
 const STORAGE_KEY = 'business_spreadsheets_expenses_v3';
 
-// Default reference records from screenshot (used if no previous data exists)
-const DEFAULT_BUSINESS_EXPENSES = [
-  { id: 'exp-1', date: '2025-01-01', desc: 'Office Supplies', category: 'Office Supplies', paymentMethod: 'Credit Card', amount: 120.00, tax: 10.00, total: 130.00, notes: 'Printer paper & ink' },
-  { id: 'exp-2', date: '2025-01-02', desc: 'Facebook Ads', category: 'Marketing', paymentMethod: 'Credit Card', amount: 350.00, tax: 0.00, total: 350.00, notes: 'Ad campaign' },
-  { id: 'exp-3', date: '2025-01-03', desc: 'Electricity Bill', category: 'Utilities', paymentMethod: 'Bank Transfer', amount: 200.00, tax: 0.00, total: 200.00, notes: 'Monthly utility' },
-  { id: 'exp-4', date: '2025-01-05', desc: 'Google Workspace', category: 'Subscriptions', paymentMethod: 'Credit Card', amount: 72.00, tax: 0.00, total: 72.00, notes: 'Monthly plan' },
-  { id: 'exp-5', date: '2025-01-06', desc: 'Business Lunch', category: 'Meals & Entertainment', paymentMethod: 'Credit Card', amount: 85.00, tax: 8.50, total: 93.50, notes: 'Client meeting' },
-  { id: 'exp-6', date: '2025-01-07', desc: 'Flight to NYC', category: 'Travel', paymentMethod: 'Credit Card', amount: 450.00, tax: 0.00, total: 450.00, notes: 'Business trip' },
-  { id: 'exp-7', date: '2025-01-08', desc: 'Adobe Creative Cloud', category: 'Software', paymentMethod: 'Credit Card', amount: 54.99, tax: 0.00, total: 54.99, notes: 'Monthly plan' },
-  { id: 'exp-8', date: '2025-01-09', desc: 'Internet Bill', category: 'Utilities', paymentMethod: 'Bank Transfer', amount: 89.99, tax: 0.00, total: 89.99, notes: 'Monthly utility' }
-];
-
-// Reference timeline data for 'EXPENSES OVER TIME' Jan - Dec
-const TIMELINE_DATA = {
-  labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-  values: [2200, 3100, 2400, 1800, 2000, 3800, 3600, 3500, 3700, 3200, 2200, 2800]
-};
+// Default reference records: Start clean with NO demo records
+const DEFAULT_BUSINESS_EXPENSES = [];
 
 // Category palette matching gold and metallic hues
 const CATEGORY_COLORS = {
@@ -73,41 +58,34 @@ document.addEventListener('DOMContentLoaded', () => {
   renderAll();
 });
 
+const DEMO_CLEARED_FLAG = 'business_expenses_demo_cleared_v5';
+
 function loadData() {
+  if (!localStorage.getItem(DEMO_CLEARED_FLAG)) {
+    // Purge cached demo data from browser storage so users see clean zero state
+    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem('myfinance_clean_transactions_v2');
+    localStorage.setItem(DEMO_CLEARED_FLAG, 'true');
+    expenses = [];
+    saveData();
+    return;
+  }
+
   const saved = localStorage.getItem(STORAGE_KEY);
   if (saved) {
     try {
       expenses = JSON.parse(saved);
+      // Remove any lingering old demo records
+      const demoIds = new Set(['exp-1', 'exp-2', 'exp-3', 'exp-4', 'exp-5', 'exp-6', 'exp-7', 'exp-8']);
+      if (Array.isArray(expenses) && expenses.length > 0 && expenses.every(e => demoIds.has(e.id))) {
+        expenses = [];
+        saveData();
+      }
     } catch (e) {
-      expenses = JSON.parse(JSON.stringify(DEFAULT_BUSINESS_EXPENSES));
+      expenses = [];
     }
   } else {
-    // Check previous project storage key to preserve user's data!
-    const previousSaved = localStorage.getItem('myfinance_clean_transactions_v2');
-    if (previousSaved) {
-      try {
-        const parsed = JSON.parse(previousSaved);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          expenses = parsed.map((item, idx) => ({
-            id: item.id || `migrated-${idx}`,
-            date: item.date || '2025-01-01',
-            desc: item.desc || 'Expense Item',
-            category: item.category || 'Office Supplies',
-            paymentMethod: item.paymentMethod || 'Credit Card',
-            amount: Number(item.amount) || 0,
-            tax: Number(item.tax) || 0,
-            total: (Number(item.amount) || 0) + (Number(item.tax) || 0),
-            notes: item.notes || ''
-          }));
-        } else {
-          expenses = JSON.parse(JSON.stringify(DEFAULT_BUSINESS_EXPENSES));
-        }
-      } catch (e) {
-        expenses = JSON.parse(JSON.stringify(DEFAULT_BUSINESS_EXPENSES));
-      }
-    } else {
-      expenses = JSON.parse(JSON.stringify(DEFAULT_BUSINESS_EXPENSES));
-    }
+    expenses = [];
     saveData();
   }
 }
@@ -127,19 +105,50 @@ function renderAll() {
   renderPaymentMethodDonut();
   renderTopExpenses();
   renderOverviewWidgets();
+  renderSmartInsightsContent();
 }
 
 function renderMetricRibbon() {
   const sumTotal = expenses.reduce((sum, e) => sum + (Number(e.total) || 0), 0);
   
-  // Baseline values matching screenshot
-  const displayTotal = sumTotal > 0 ? sumTotal : 24850;
-  const thisMonthVal = 4250.00;
-  const lastMonthVal = 3890.00;
-  const momPct = '+ 9.26%';
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const currentMonth = now.getMonth(); // 0-indexed
+
+  let thisMonthVal = 0;
+  let lastMonthVal = 0;
+
+  expenses.forEach(e => {
+    if (!e.date) return;
+    const parts = e.date.split('-');
+    if (parts.length >= 2) {
+      const year = parseInt(parts[0], 10);
+      const month = parseInt(parts[1], 10) - 1;
+      const amt = Number(e.total) || 0;
+      if (year === currentYear && month === currentMonth) {
+        thisMonthVal += amt;
+      } else if (
+        (currentMonth > 0 && year === currentYear && month === currentMonth - 1) ||
+        (currentMonth === 0 && year === currentYear - 1 && month === 11)
+      ) {
+        lastMonthVal += amt;
+      }
+    }
+  });
+
+  let momStr = '0.0%';
+  if (lastMonthVal > 0) {
+    const diffPct = ((thisMonthVal - lastMonthVal) / lastMonthVal) * 100;
+    const sign = diffPct >= 0 ? '+' : '';
+    momStr = `${sign} ${diffPct.toFixed(1)}% ${diffPct >= 0 ? '↗' : '↘'}`;
+  } else if (thisMonthVal > 0) {
+    momStr = '+ 100% ↗';
+  } else {
+    momStr = '0.0%';
+  }
 
   const categoriesSet = new Set(expenses.map(e => e.category).filter(Boolean));
-  const categoryCount = Math.max(categoriesSet.size, 9);
+  const categoryCount = categoriesSet.size;
 
   const elTotal = document.getElementById('metric-total-expenses');
   const elThisMonth = document.getElementById('metric-this-month');
@@ -147,10 +156,10 @@ function renderMetricRibbon() {
   const elMom = document.getElementById('metric-mom-pct');
   const elTotalCat = document.getElementById('metric-total-categories');
 
-  if (elTotal) elTotal.textContent = `${CURRENCY} ${displayTotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  if (elTotal) elTotal.textContent = `${CURRENCY} ${sumTotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   if (elThisMonth) elThisMonth.textContent = `${CURRENCY} ${thisMonthVal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   if (elLastMonth) elLastMonth.textContent = `${CURRENCY} ${lastMonthVal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-  if (elMom) elMom.textContent = `${momPct} ↗`;
+  if (elMom) elMom.textContent = momStr;
   if (elTotalCat) elTotalCat.textContent = categoryCount;
 }
 
@@ -293,33 +302,45 @@ function renderCategoryDonut() {
     categoryChartInstance.destroy();
   }
 
-  // Pre-seed with the reference screenshot category distributions
-  const categoryTotals = {
-    'Marketing': 6450,
-    'Office Supplies': 4320,
-    'Utilities': 3540,
-    'Travel': 2980,
-    'Subscriptions': 1780,
-    'Software': 1420,
-    'Meals & Entertainment': 1200,
-    'Insurance': 950,
-    'Other': 800
-  };
-
-  // Add extra expenses dynamically
+  // Calculate actual category totals from live expenses
+  const categoryTotals = {};
   expenses.forEach(e => {
     const cat = e.category || 'Other';
-    if (categoryTotals[cat] !== undefined) {
-      categoryTotals[cat] += (Number(e.total) || 0);
-    } else {
-      categoryTotals[cat] = (Number(e.total) || 0);
-    }
+    categoryTotals[cat] = (categoryTotals[cat] || 0) + (Number(e.total) || 0);
   });
 
   const grandTotal = Object.values(categoryTotals).reduce((a, b) => a + b, 0);
-
   const labels = Object.keys(categoryTotals);
-  const data = Object.values(categoryTotals);
+
+  if (labels.length === 0 || grandTotal === 0) {
+    legendList.innerHTML = `<div style="color: var(--text-dim); font-size: 11px; padding: 12px 0;">No category data yet. Log an expense to see distribution.</div>`;
+    categoryChartInstance = new Chart(canvas, {
+      type: 'doughnut',
+      data: {
+        labels: ['No Expenses'],
+        datasets: [{
+          data: [1],
+          backgroundColor: ['rgba(255, 255, 255, 0.05)'],
+          borderWidth: 1,
+          borderColor: '#0f0f10'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '68%',
+        plugins: {
+          legend: { display: false },
+          tooltip: { enabled: false }
+        }
+      }
+    });
+    return;
+  }
+
+  // Sort by highest expenditure
+  labels.sort((a, b) => categoryTotals[b] - categoryTotals[a]);
+  const data = labels.map(l => categoryTotals[l]);
   const colors = labels.map(l => CATEGORY_COLORS[l] || '#c59b27');
 
   categoryChartInstance = new Chart(canvas, {
@@ -354,7 +375,7 @@ function renderCategoryDonut() {
     }
   });
 
-  // Render Legend
+  // Render Interactive Legend
   legendList.innerHTML = '';
   labels.forEach(name => {
     const val = categoryTotals[name];
@@ -404,6 +425,25 @@ function renderExpensesOverTime() {
     timeChartInstance.destroy();
   }
 
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const monthlyValues = new Array(12).fill(0);
+
+  const currentYear = new Date().getFullYear();
+  expenses.forEach(e => {
+    if (!e.date) return;
+    const parts = e.date.split('-');
+    if (parts.length >= 2) {
+      const year = parseInt(parts[0], 10);
+      const month = parseInt(parts[1], 10) - 1;
+      if (year === currentYear && month >= 0 && month < 12) {
+        monthlyValues[month] += (Number(e.total) || 0);
+      }
+    }
+  });
+
+  const maxVal = Math.max(...monthlyValues);
+  const yMax = maxVal > 0 ? Math.ceil(maxVal * 1.25) : 1000;
+
   const ctx = canvas.getContext('2d');
   const gradient = ctx.createLinearGradient(0, 0, 0, 140);
   gradient.addColorStop(0, 'rgba(212, 175, 55, 0.3)');
@@ -412,10 +452,10 @@ function renderExpensesOverTime() {
   timeChartInstance = new Chart(canvas, {
     type: 'line',
     data: {
-      labels: TIMELINE_DATA.labels,
+      labels: months,
       datasets: [{
         label: 'Monthly Spend',
-        data: TIMELINE_DATA.values,
+        data: monthlyValues,
         borderColor: '#d4af37',
         borderWidth: 2,
         backgroundColor: gradient,
@@ -451,12 +491,11 @@ function renderExpensesOverTime() {
         },
         y: {
           min: 0,
-          max: 5000,
+          max: yMax,
           ticks: {
-            stepSize: 1000,
             color: '#94a3b8',
             font: { size: 8.5, family: 'JetBrains Mono' },
-            callback: (v) => v === 0 ? '0K' : `${v / 1000}K`
+            callback: (v) => v >= 1000 ? `${(v / 1000).toFixed(0)}K` : v
           },
           grid: { color: 'rgba(255, 255, 255, 0.04)' }
         }
@@ -477,21 +516,50 @@ function renderPaymentMethodDonut() {
     paymentChartInstance.destroy();
   }
 
-  const paymentTotals = {
-    'Credit Card': 60,
-    'Bank Transfer': 25,
-    'Cash': 15
-  };
+  const paymentTotals = {};
+  expenses.forEach(e => {
+    const method = e.paymentMethod || 'Credit Card';
+    paymentTotals[method] = (paymentTotals[method] || 0) + (Number(e.total) || 0);
+  });
+
+  const grandTotal = Object.values(paymentTotals).reduce((a, b) => a + b, 0);
+  const labels = Object.keys(paymentTotals);
 
   const paymentColors = {
     'Credit Card': '#c59b27',     // Rich Gold
     'Bank Transfer': '#52525b',   // Dark Slate
-    'Cash': '#d4b886'            // Warm Tan
+    'Cash': '#d4b886',            // Warm Tan
+    'Other': '#78716c'
   };
 
-  const labels = Object.keys(paymentTotals);
-  const data = Object.values(paymentTotals);
-  const colors = labels.map(l => paymentColors[l]);
+  if (labels.length === 0 || grandTotal === 0) {
+    legendList.innerHTML = `<div style="color: var(--text-dim); font-size: 11px; padding: 12px 0;">No payment data recorded yet.</div>`;
+    paymentChartInstance = new Chart(canvas, {
+      type: 'doughnut',
+      data: {
+        labels: ['No Payment Data'],
+        datasets: [{
+          data: [1],
+          backgroundColor: ['rgba(255, 255, 255, 0.05)'],
+          borderWidth: 1,
+          borderColor: '#0f0f10'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '68%',
+        plugins: {
+          legend: { display: false },
+          tooltip: { enabled: false }
+        }
+      }
+    });
+    return;
+  }
+
+  const data = labels.map(l => paymentTotals[l]);
+  const colors = labels.map(l => paymentColors[l] || '#c59b27');
 
   paymentChartInstance = new Chart(canvas, {
     type: 'doughnut',
@@ -518,7 +586,10 @@ function renderPaymentMethodDonut() {
           borderWidth: 1,
           padding: 8,
           callbacks: {
-            label: (ctx) => ` ${ctx.label}: ${ctx.parsed}%`
+            label: (ctx) => {
+              const pct = grandTotal > 0 ? Math.round((ctx.parsed / grandTotal) * 100) : 0;
+              return ` ${ctx.label}: ${CURRENCY} ${ctx.parsed.toLocaleString('en-IN')} (${pct}%)`;
+            }
           }
         }
       }
@@ -527,8 +598,9 @@ function renderPaymentMethodDonut() {
 
   legendList.innerHTML = '';
   labels.forEach(name => {
-    const pct = paymentTotals[name];
-    const color = paymentColors[name];
+    const val = paymentTotals[name];
+    const pct = grandTotal > 0 ? Math.round((val / grandTotal) * 100) : 0;
+    const color = paymentColors[name] || '#c59b27';
 
     const row = document.createElement('div');
     row.className = 'legend-square-row';
@@ -550,16 +622,29 @@ function renderTopExpenses() {
   const container = document.getElementById('top-expenses-list');
   if (!container) return;
 
-  // Matching screenshot top 5 ranked items
-  const ranked = [
-    { name: 'Marketing', amount: 6450.00 },
-    { name: 'Office Supplies', amount: 4320.00 },
-    { name: 'Utilities', amount: 3540.00 },
-    { name: 'Travel', amount: 2980.00 },
-    { name: 'Subscriptions', amount: 1780.00 }
-  ];
+  if (expenses.length === 0) {
+    container.innerHTML = `
+      <div style="color: var(--text-dim); font-size: 11px; padding: 20px 0; text-align: center;">
+        <i class="fa-solid fa-receipt" style="font-size: 18px; margin-bottom: 6px; display: block; color: var(--gold-dim);"></i>
+        No expenses recorded yet. Log your first expense to see ranking.
+      </div>
+    `;
+    return;
+  }
 
-  const maxVal = ranked[0].amount;
+  // Aggregate top spend categories dynamically
+  const categoryTotals = {};
+  expenses.forEach(e => {
+    const cat = e.category || 'Other';
+    categoryTotals[cat] = (categoryTotals[cat] || 0) + (Number(e.total) || 0);
+  });
+
+  const ranked = Object.entries(categoryTotals)
+    .map(([name, amount]) => ({ name, amount }))
+    .sort((a, b) => b.amount - a.amount)
+    .slice(0, 5);
+
+  const maxVal = ranked[0].amount || 1;
 
   container.innerHTML = '';
   ranked.forEach(item => {
@@ -804,17 +889,17 @@ function initEventListeners() {
     });
   });
 
-  // Reset Demo Records Button
+  // Reset Button -> Clears records
   const btnReset = document.getElementById('btn-reset-demo');
   if (btnReset) {
     btnReset.addEventListener('click', () => {
-      if (confirm('Reset to default reference sample expenses?')) {
-        expenses = JSON.parse(JSON.stringify(DEFAULT_BUSINESS_EXPENSES));
+      if (confirm('Clear all ledger records and reset to empty?')) {
+        expenses = [];
         saveData();
         activeCategoryFilter = 'all';
         updateFilterPillUI('all');
         renderAll();
-        showToast('Reset to default sample expenses.');
+        showToast('Expense ledger reset to empty.');
       }
     });
   }
@@ -1048,13 +1133,13 @@ let monthlyBudgetLimit = 50000;
 
 function updateBudgetModalUI() {
   const sumTotal = expenses.reduce((sum, e) => sum + (Number(e.total) || 0), 0);
-  const spentAmount = sumTotal > 0 ? sumTotal : 24850.00;
+  const spentAmount = sumTotal;
   const savedLimit = localStorage.getItem('business_monthly_budget_limit');
   if (savedLimit) {
     monthlyBudgetLimit = parseFloat(savedLimit) || 50000;
   }
 
-  const pct = Math.min(100, Math.round((spentAmount / monthlyBudgetLimit) * 100));
+  const pct = monthlyBudgetLimit > 0 ? Math.min(100, Math.round((spentAmount / monthlyBudgetLimit) * 100)) : 0;
   const remaining = Math.max(0, monthlyBudgetLimit - spentAmount);
 
   const elSpent = document.getElementById('budget-spent-amount');
@@ -1148,8 +1233,8 @@ function initNavigation() {
    -------------------------------------------------------------------------- */
 function renderOverviewWidgets() {
   const sumTotal = expenses.reduce((sum, e) => sum + (Number(e.total) || 0), 0);
-  const spentAmount = sumTotal > 0 ? sumTotal : 24850.00;
-  const pct = Math.min(100, Math.round((spentAmount / monthlyBudgetLimit) * 100));
+  const spentAmount = sumTotal;
+  const pct = monthlyBudgetLimit > 0 ? Math.min(100, Math.round((spentAmount / monthlyBudgetLimit) * 100)) : 0;
   const remaining = Math.max(0, monthlyBudgetLimit - spentAmount);
 
   // Dashboard Overview Widget
@@ -1165,6 +1250,38 @@ function renderOverviewWidgets() {
   }
   if (elDashPct) elDashPct.textContent = `${pct}% of monthly budget (${CURRENCY} ${monthlyBudgetLimit.toLocaleString('en-IN')})`;
   if (elDashRemain) elDashRemain.textContent = `Remaining: ${CURRENCY} ${remaining.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+  // Card B: Spend distribution preview
+  const overviewCatList = document.getElementById('overview-cat-stat-list');
+  if (overviewCatList) {
+    const categoryTotals = {};
+    expenses.forEach(e => {
+      const cat = e.category || 'Other';
+      categoryTotals[cat] = (categoryTotals[cat] || 0) + (Number(e.total) || 0);
+    });
+
+    const sortedCats = Object.entries(categoryTotals)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 3);
+
+    if (sortedCats.length === 0) {
+      overviewCatList.innerHTML = `<span style="color: var(--text-dim); font-size: 11px;">No category distribution data yet.</span>`;
+    } else {
+      overviewCatList.innerHTML = '';
+      sortedCats.forEach(([catName, amt]) => {
+        const catPct = sumTotal > 0 ? Math.round((amt / sumTotal) * 100) : 0;
+        const color = CATEGORY_COLORS[catName] || '#c59b27';
+        const itemEl = document.createElement('div');
+        itemEl.className = 'quick-cat-stat-item';
+        itemEl.innerHTML = `
+          <span class="q-dot" style="background: ${color};"></span>
+          <span class="q-name">${escapeHtml(catName)}</span>
+          <span class="q-val">${CURRENCY} ${amt.toLocaleString('en-IN')} (${catPct}%)</span>
+        `;
+        overviewCatList.appendChild(itemEl);
+      });
+    }
+  }
 
   // In-page dedicated budget panel
   const elInpageSpent = document.getElementById('inpage-spent-disp');
@@ -1190,7 +1307,9 @@ function renderOverviewWidgets() {
     inpageBudgetInput.value = monthlyBudgetLimit;
   }
   if (statusNotice) {
-    if (pct > 95) {
+    if (expenses.length === 0) {
+      statusNotice.innerHTML = `<i class="fa-solid fa-circle-check" style="color: var(--green-gain);"></i> <span>No expenditures recorded for this cycle yet. Total available budget: ${CURRENCY} ${monthlyBudgetLimit.toLocaleString('en-IN')}.</span>`;
+    } else if (pct > 95) {
       statusNotice.innerHTML = `<i class="fa-solid fa-triangle-exclamation" style="color: var(--red-loss);"></i> <span style="color: var(--red-loss);">Alert: Monthly budget capacity is at ${pct}%. Immediate expense freeze recommended.</span>`;
     } else {
       const buffer = Math.max(0, 100 - pct);
@@ -1219,30 +1338,110 @@ function renderOverviewWidgets() {
     }
   }
 
-  // Insights input tax calculation
+  // Insights input tax calculation & dynamic insights update
   const sumTax = expenses.reduce((sum, e) => sum + (Number(e.tax) || 0), 0);
   const taxDisp = document.getElementById('insights-total-tax');
   if (taxDisp) taxDisp.textContent = `${CURRENCY} ${sumTax.toFixed(2)}`;
+
+  updateDynamicInpageInsights(sumTotal, sumTax);
+}
+
+function updateDynamicInpageInsights(sumTotal, sumTax) {
+  const driverBody = document.getElementById('insight-driver-body');
+  const savingsBody = document.getElementById('insight-savings-body');
+
+  if (driverBody) {
+    if (expenses.length === 0) {
+      driverBody.innerHTML = `
+        <h4 style="font-size: 16px; color: #ffffff; margin-bottom: 6px;">No Expenses Logged</h4>
+        <p style="color: var(--text-muted); font-size: 12px; line-height: 1.5; margin-bottom: 12px;">
+          Log business expenses to automatically identify primary cost drivers and category distribution.
+        </p>
+        <div class="insight-badge-tag"><i class="fa-solid fa-clock"></i> Awaiting Data</div>
+      `;
+    } else {
+      const categoryTotals = {};
+      expenses.forEach(e => {
+        const cat = e.category || 'Other';
+        categoryTotals[cat] = (categoryTotals[cat] || 0) + (Number(e.total) || 0);
+      });
+      const topCat = Object.entries(categoryTotals).sort((a, b) => b[1] - a[1])[0];
+      const topPct = sumTotal > 0 ? Math.round((topCat[1] / sumTotal) * 100) : 0;
+      driverBody.innerHTML = `
+        <h4 style="font-size: 16px; color: #ffffff; margin-bottom: 6px;">${escapeHtml(topCat[0])}</h4>
+        <p style="color: var(--text-muted); font-size: 12px; line-height: 1.5; margin-bottom: 12px;">
+          ${escapeHtml(topCat[0])} represents <strong style="color: var(--gold-light);">${topPct}% (${CURRENCY} ${topCat[1].toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })})</strong> of your total expenditures. Monitor this outlay closely to preserve operating margins.
+        </p>
+        <div class="insight-badge-tag"><i class="fa-solid fa-arrow-trend-up"></i> Top Spend Category</div>
+      `;
+    }
+  }
+
+  if (savingsBody) {
+    const recurringOutlays = expenses.filter(e => ['Subscriptions', 'Software', 'Utilities'].includes(e.category));
+    const recurringTotal = recurringOutlays.reduce((sum, e) => sum + (Number(e.total) || 0), 0);
+    if (recurringTotal === 0) {
+      savingsBody.innerHTML = `
+        <h4 style="font-size: 16px; color: #ffffff; margin-bottom: 6px;">Recurring Outlay Optimization</h4>
+        <p style="color: var(--text-muted); font-size: 12px; line-height: 1.5; margin-bottom: 12px;">
+          Categorize software and utility outlays to unlock automated suggestions for annual consolidation and discounts.
+        </p>
+        <div class="insight-badge-tag green"><i class="fa-solid fa-piggy-bank"></i> Est. Savings: ${CURRENCY} 0.00</div>
+      `;
+    } else {
+      const estSavings = (recurringTotal * 0.15).toFixed(2);
+      savingsBody.innerHTML = `
+        <h4 style="font-size: 16px; color: #ffffff; margin-bottom: 6px;">Consolidate Subscriptions & Utilities</h4>
+        <p style="color: var(--text-muted); font-size: 12px; line-height: 1.5; margin-bottom: 12px;">
+          Recurring outlays total <strong style="color: var(--gold-light);">${CURRENCY} ${recurringTotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong>. Migrating monthly plans to annual billing unlocks up to <strong>15% annual savings</strong>.
+        </p>
+        <div class="insight-badge-tag green"><i class="fa-solid fa-piggy-bank"></i> Est. Savings: ${CURRENCY} ${Number(estSavings).toLocaleString('en-IN')}</div>
+      `;
+    }
+  }
 }
 
 function renderSmartInsightsContent() {
   const container = document.getElementById('insights-content-body');
   if (!container) return;
 
-  const sumTotal = expenses.reduce((sum, e) => sum + (Number(e.total) || 0), 0) || 24850;
+  const sumTotal = expenses.reduce((sum, e) => sum + (Number(e.total) || 0), 0);
   const sumTax = expenses.reduce((sum, e) => sum + (Number(e.tax) || 0), 0);
-  const count = expenses.length || 8;
-  const avgExpense = Math.round(sumTotal / count);
+  const count = expenses.length;
+  const avgExpense = count > 0 ? Math.round(sumTotal / count) : 0;
+
+  if (count === 0) {
+    container.innerHTML = `
+      <div style="display: flex; flex-direction: column; gap: 12px; font-size: 11.5px; color: var(--text-light);">
+        <div style="background: var(--bg-input); padding: 14px; border-radius: var(--radius-xs); border: 1px solid var(--gold-border); text-align: center;">
+          <i class="fa-solid fa-lightbulb" style="font-size: 24px; color: var(--gold-primary); margin-bottom: 8px; display: block;"></i>
+          <strong style="color: #fff; font-size: 13px; display: block; margin-bottom: 4px;">No Expense Records Found</strong>
+          <p style="color: var(--text-muted); line-height: 1.4;">
+            As soon as you log business expenses, this engine generates real-time spend driver detection, tax reconciliation, and cost-reduction audits.
+          </p>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  const categoryTotals = {};
+  expenses.forEach(e => {
+    const cat = e.category || 'Other';
+    categoryTotals[cat] = (categoryTotals[cat] || 0) + (Number(e.total) || 0);
+  });
+  const topCat = Object.entries(categoryTotals).sort((a, b) => b[1] - a[1])[0];
+  const topPct = sumTotal > 0 ? Math.round((topCat[1] / sumTotal) * 100) : 0;
 
   container.innerHTML = `
     <div style="display: flex; flex-direction: column; gap: 12px; font-size: 11.5px; color: var(--text-light);">
       
       <div style="background: var(--bg-input); padding: 12px; border-radius: var(--radius-xs); border: 1px solid var(--gold-border);">
         <strong style="color: var(--gold-primary); font-size: 12.5px; display: block; margin-bottom: 4px;">
-          <i class="fa-solid fa-trophy"></i> Primary Spend Driver: Marketing (26%)
+          <i class="fa-solid fa-trophy"></i> Primary Spend Driver: ${escapeHtml(topCat[0])} (${topPct}%)
         </strong>
         <p style="color: var(--text-muted); line-height: 1.4;">
-          Marketing accounts for ${CURRENCY} 6,450.00 of your total outlays. Ensure client acquisition ROAS exceeds 3.5x to preserve profit margins.
+          ${escapeHtml(topCat[0])} accounts for ${CURRENCY} ${topCat[1].toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} of your total outlays. Ensure that returns on this expenditure remain optimal.
         </p>
       </div>
 
@@ -1259,10 +1458,10 @@ function renderSmartInsightsContent() {
 
       <div style="background: rgba(34, 197, 94, 0.08); padding: 10px 12px; border-radius: var(--radius-xs); border: 1px solid rgba(34, 197, 94, 0.25);">
         <strong style="color: var(--green-gain); display: flex; align-items: center; gap: 6px; margin-bottom: 3px;">
-          <i class="fa-solid fa-shield-halved"></i> Smart Savings Tip
+          <i class="fa-solid fa-shield-halved"></i> Active Portfolio Audit
         </strong>
         <p style="color: var(--text-muted); font-size: 11px; line-height: 1.35;">
-          Utilities and subscriptions account for 21% of monthly costs. Consolidating cloud seats and switching to annual billing can yield up to 15% in operational savings.
+          ${count} expense record${count === 1 ? '' : 's'} tracked across ${Object.keys(categoryTotals).length} categor${Object.keys(categoryTotals).length === 1 ? 'y' : 'ies'}. All figures are 100% computed in real-time.
         </p>
       </div>
 

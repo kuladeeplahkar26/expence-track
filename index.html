@@ -158,27 +158,27 @@
             
             <div class="metric-pill-box">
               <span class="metric-pill-label">TOTAL EXPENSES</span>
-              <span class="metric-pill-val" id="metric-total-expenses">₹24,850.00</span>
+              <span class="metric-pill-val" id="metric-total-expenses">₹0.00</span>
             </div>
 
             <div class="metric-pill-box">
               <span class="metric-pill-label">THIS MONTH</span>
-              <span class="metric-pill-val" id="metric-this-month">₹4,250.00</span>
+              <span class="metric-pill-val" id="metric-this-month">₹0.00</span>
             </div>
 
             <div class="metric-pill-box">
               <span class="metric-pill-label">LAST MONTH</span>
-              <span class="metric-pill-val" id="metric-last-month">₹3,890.00</span>
+              <span class="metric-pill-val" id="metric-last-month">₹0.00</span>
             </div>
 
             <div class="metric-pill-box">
               <span class="metric-pill-label">MONTH OVER MONTH</span>
-              <span class="metric-pill-val text-gold-trend" id="metric-mom-pct">+ 9.26% ↗</span>
+              <span class="metric-pill-val text-gold-trend" id="metric-mom-pct">0.0%</span>
             </div>
 
             <div class="metric-pill-box">
               <span class="metric-pill-label">TOTAL CATEGORIES</span>
-              <span class="metric-pill-val" id="metric-total-categories">9</span>
+              <span class="metric-pill-val" id="metric-total-categories">0</span>
             </div>
 
           </div>
@@ -191,7 +191,7 @@
             <button class="btn-outline-action" id="btn-export-csv" title="Export to CSV">
               <i class="fa-solid fa-file-csv"></i> CSV
             </button>
-            <button class="btn-outline-action" id="btn-reset-demo" title="Reset sample records">
+            <button class="btn-outline-action" id="btn-reset-demo" title="Clear all records">
               <i class="fa-solid fa-rotate-left"></i> Reset
             </button>
             <button class="btn-outline-action text-danger" id="btn-clear-all" title="Clear all expenses">
@@ -212,14 +212,14 @@
             <div class="overview-budget-content">
               <div class="overview-stat-row">
                 <span class="overview-stat-label">Spent This Month</span>
-                <span class="overview-stat-val" id="dash-spent-val">₹ 24,850.00</span>
+                <span class="overview-stat-val" id="dash-spent-val">₹ 0.00</span>
               </div>
               <div class="budget-bar-track" style="margin: 10px 0;">
-                <div class="budget-bar-fill" id="dash-budget-bar" style="width: 50%;"></div>
+                <div class="budget-bar-fill" id="dash-budget-bar" style="width: 0%;"></div>
               </div>
               <div class="overview-stat-row sub-row">
-                <span id="dash-budget-pct-text" style="color: var(--text-dim); font-size: 11px;">50% of monthly budget</span>
-                <span id="dash-budget-remain-text" style="color: var(--gold-light); font-weight: 700; font-size: 11px;">Remaining: ₹ 25,150.00</span>
+                <span id="dash-budget-pct-text" style="color: var(--text-dim); font-size: 11px;">0% of monthly budget</span>
+                <span id="dash-budget-remain-text" style="color: var(--gold-light); font-weight: 700; font-size: 11px;">Remaining: ₹ 50,000.00</span>
               </div>
             </div>
           </div>
@@ -231,22 +231,8 @@
               <button type="button" class="btn-panel-link" data-jump-view="analytics">All Charts →</button>
             </div>
             <div class="overview-highlight-content">
-              <div class="quick-cat-stat-list">
-                <div class="quick-cat-stat-item">
-                  <span class="q-dot" style="background: #c59b27;"></span>
-                  <span class="q-name">Marketing</span>
-                  <span class="q-val">₹ 6,450 (26%)</span>
-                </div>
-                <div class="quick-cat-stat-item">
-                  <span class="q-dot" style="background: #e5c058;"></span>
-                  <span class="q-name">Office Supplies</span>
-                  <span class="q-val">₹ 4,320 (17%)</span>
-                </div>
-                <div class="quick-cat-stat-item">
-                  <span class="q-dot" style="background: #b8933b;"></span>
-                  <span class="q-name">Utilities</span>
-                  <span class="q-val">₹ 3,540 (14%)</span>
-                </div>
+              <div class="quick-cat-stat-list" id="overview-cat-stat-list">
+                <!-- Dynamically populated categories -->
               </div>
             </div>
           </div>
@@ -274,7 +260,7 @@
           <div class="panel-header-line">
             <div class="panel-title-with-counter">
               <h3 class="panel-header-title"><i class="fa-solid fa-table-list" style="color: var(--gold-primary); margin-right: 8px;"></i> EXPENSE LEDGER</h3>
-              <span class="record-counter-pill" id="record-counter-pill">8 records</span>
+              <span class="record-counter-pill" id="record-counter-pill">0 records</span>
             </div>
             <div class="ledger-actions-group">
               <div class="table-search-wrap">
@@ -431,7 +417,7 @@
               <div class="budget-stats-duo">
                 <div class="b-stat-card">
                   <span class="b-stat-title">CURRENT SPENT</span>
-                  <span class="b-stat-number" id="inpage-spent-disp">₹ 24,850.00</span>
+                  <span class="b-stat-number" id="inpage-spent-disp">₹ 0.00</span>
                 </div>
                 <div class="b-stat-card">
                   <span class="b-stat-title">TARGET CAP</span>
@@ -439,23 +425,23 @@
                 </div>
                 <div class="b-stat-card">
                   <span class="b-stat-title">REMAINING POOL</span>
-                  <span class="b-stat-number" id="inpage-remain-disp" style="color: var(--green-gain);">₹ 25,150.00</span>
+                  <span class="b-stat-number" id="inpage-remain-disp" style="color: var(--green-gain);">₹ 50,000.00</span>
                 </div>
               </div>
 
               <div class="budget-gauge-box">
                 <div class="budget-gauge-labels">
                   <span style="font-size: 11px; color: var(--text-light); font-weight: 600;">Monthly Utilization</span>
-                  <span id="inpage-pct-disp" style="font-size: 11px; font-weight: 800; color: var(--gold-light);">50% used</span>
+                  <span id="inpage-pct-disp" style="font-size: 11px; font-weight: 800; color: var(--gold-light);">0% used</span>
                 </div>
                 <div class="budget-bar-track" style="height: 12px; margin-top: 6px;">
-                  <div class="budget-bar-fill" id="inpage-budget-bar" style="width: 50%;"></div>
+                  <div class="budget-bar-fill" id="inpage-budget-bar" style="width: 0%;"></div>
                 </div>
               </div>
 
               <div class="budget-status-notice" id="budget-status-notice">
                 <i class="fa-solid fa-circle-check" style="color: var(--green-gain);"></i>
-                <span>Spending is within safe operating thresholds. Projected end-of-month buffer: 48%.</span>
+                <span>No expenditures recorded for this cycle yet. Total available budget: ₹ 50,000.00.</span>
               </div>
             </div>
 
@@ -474,18 +460,18 @@
           <p class="comp-title-sub">Automated financial intelligence, cost drivers analysis, and margin optimization recommendations.</p>
         </div>
 
-        <div class="insights-dashboard-grid">
+        <div class="insights-dashboard-grid" id="insights-dashboard-grid">
           
           <div class="dark-panel-box insight-highlight-box">
             <div class="panel-header-line">
               <h3 class="panel-header-title"><i class="fa-solid fa-trophy" style="color: var(--gold-primary);"></i> PRIMARY SPEND DRIVER</h3>
             </div>
-            <div class="insight-box-body">
-              <h4 style="font-size: 16px; color: #ffffff; margin-bottom: 6px;">Marketing & Client Acquisition</h4>
+            <div class="insight-box-body" id="insight-driver-body">
+              <h4 style="font-size: 16px; color: #ffffff; margin-bottom: 6px;">No Expenses Logged</h4>
               <p style="color: var(--text-muted); font-size: 12px; line-height: 1.5; margin-bottom: 12px;">
-                Marketing represents <strong style="color: var(--gold-light);">26% (₹ 6,450.00)</strong> of your total expenditures. To sustain healthy operating margins, verify that your customer acquisition blended ROAS exceeds 3.5x.
+                Log business expenses to automatically identify primary cost drivers and category distribution.
               </p>
-              <div class="insight-badge-tag"><i class="fa-solid fa-arrow-trend-up"></i> High Impact Area</div>
+              <div class="insight-badge-tag"><i class="fa-solid fa-clock"></i> Awaiting Data</div>
             </div>
           </div>
 
@@ -493,12 +479,12 @@
             <div class="panel-header-line">
               <h3 class="panel-header-title"><i class="fa-solid fa-shield-halved" style="color: var(--green-gain);"></i> SMART SAVINGS OPPORTUNITY</h3>
             </div>
-            <div class="insight-box-body">
-              <h4 style="font-size: 16px; color: #ffffff; margin-bottom: 6px;">Consolidate SaaS & Recurring Utilities</h4>
+            <div class="insight-box-body" id="insight-savings-body">
+              <h4 style="font-size: 16px; color: #ffffff; margin-bottom: 6px;">Recurring Outlay Optimization</h4>
               <p style="color: var(--text-muted); font-size: 12px; line-height: 1.5; margin-bottom: 12px;">
-                Subscriptions & software outlays total <strong style="color: var(--gold-light);">₹ 3,200.00</strong> across multiple tools. Migrating monthly licenses to annual commitments unlocks up to <strong>15% annual savings</strong>.
+                Categorize software and utility outlays to unlock automated suggestions for annual consolidation and discounts.
               </p>
-              <div class="insight-badge-tag green"><i class="fa-solid fa-piggy-bank"></i> Est. Savings: ₹ 480/mo</div>
+              <div class="insight-badge-tag green"><i class="fa-solid fa-piggy-bank"></i> Est. Savings: ₹ 0.00</div>
             </div>
           </div>
 
@@ -509,7 +495,7 @@
             <div class="insight-box-body">
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                 <span style="font-size: 12px; color: var(--text-muted);">Recorded Input Tax</span>
-                <span style="font-family: var(--font-mono); font-size: 15px; font-weight: 700; color: var(--gold-light);" id="insights-total-tax">₹ 18.50</span>
+                <span style="font-family: var(--font-mono); font-size: 15px; font-weight: 700; color: var(--gold-light);" id="insights-total-tax">₹ 0.00</span>
               </div>
               <p style="color: var(--text-dim); font-size: 11px; line-height: 1.4;">
                 All tax outlays are categorized for immediate GST/VAT reconciliation and quarterly tax deduction filings.
@@ -695,14 +681,14 @@
         <!-- Budget Gauge -->
         <div class="budget-progress-container" style="background: var(--bg-input); padding: 12px; border-radius: var(--radius-xs); border: 1px solid var(--gold-border-faint); margin-bottom: 16px;">
           <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 6px;">
-            <span style="color: var(--text-muted);">Current Spend: <strong id="budget-spent-amount" style="color: #fff;">₹24,850.00</strong></span>
-            <span style="color: var(--gold-light);" id="budget-spent-pct">49.7% used</span>
+            <span style="color: var(--text-muted);">Current Spend: <strong id="budget-spent-amount" style="color: #fff;">₹0.00</strong></span>
+            <span style="color: var(--gold-light);" id="budget-spent-pct">0% used</span>
           </div>
           <div class="top-exp-bar-track" style="height: 10px;">
-            <div class="top-exp-bar-fill" id="budget-progress-bar" style="width: 49.7%; transition: width 0.3s ease;"></div>
+            <div class="top-exp-bar-fill" id="budget-progress-bar" style="width: 0%; transition: width 0.3s ease;"></div>
           </div>
           <div style="display: flex; justify-content: space-between; font-size: 10.5px; margin-top: 6px; color: var(--gold-dim);">
-            <span>Allowance Left: <strong id="budget-remaining-amount" style="color: var(--green-gain);">₹25,150.00</strong></span>
+            <span>Allowance Left: <strong id="budget-remaining-amount" style="color: var(--green-gain);">₹50,000.00</strong></span>
             <span>Target: <strong id="budget-target-display">₹50,000.00</strong></span>
           </div>
         </div>
